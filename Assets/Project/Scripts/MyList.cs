@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,11 @@ public class MyList : MonoBehaviour
 {
 	[SerializeField] TMP_Text numberOfItems;
 	[SerializeField] Transform content;
+
+	public List<Item> GetAllItems()
+	{
+		return content.GetComponentsInChildren<Item>().ToList();
+	}
 
 	public void AddItem(Item item)
 	{

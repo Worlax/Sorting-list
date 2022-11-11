@@ -4,9 +4,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
+    [SerializeField] new TMP_Text name;
+    [SerializeField] TMP_Text id;
+
+    public string Name => name.text;
+    public string Id => id.text;
+
     public static event Action<Item> OnParentChanged;
 
     MyList parentList;
