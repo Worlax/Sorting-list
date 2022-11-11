@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
@@ -6,6 +7,8 @@ using UnityEngine.EventSystems;
 
 public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
+    public static event Action<Item> OnParentChanged;
+
     MyList parentList;
 
     MyList CheckForListSwap()
@@ -18,6 +21,7 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
             {
                 parentList = myList;
                 parentList.AddItem(this);
+                OnParentChanged?.Invoke(this);
             }
         }
 

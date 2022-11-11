@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MyList : MonoBehaviour
 {
+	[SerializeField] TMP_Text numberOfItems;
 	[SerializeField] Transform content;
 
 	public void AddItem(Item item)
@@ -31,5 +34,18 @@ public class MyList : MonoBehaviour
 		item.transform.SetParent(null);
 		item.transform.SetParent(content);
 		item.transform.SetSiblingIndex(index);
+    }
+
+    void UpdateDisplayedItems()
+    {
+		numberOfItems.text = content.transform.childCount.ToString();
+    }
+
+	// Unity
+	private void Start()
+	{
+		Item.OnParentChanged += _ => UpdateDisplayedItems();
+
+        UpdateDisplayedItems();
     }
 }
