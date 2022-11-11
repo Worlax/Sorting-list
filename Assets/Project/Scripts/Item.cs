@@ -1,16 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Item : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    MyList myList;
+    MyList parentList;
 
-    MyList GetListUnderMouse()
+    MyList CheckForListSwap()
+    {
+        foreach (GameObject element in GetUiElementsUnderMouse())
+        {
+            MyList myList = element.GetComponent<MyList>();
+
+            if (myList != null && myList != parentList)
+            {
+                parentList = myList;
+                parentList.AddItem(this);
+            }
+        }
+
+        return null;
+    }
+
+    void CheckForItemSpaw()
+    {
+        foreach (GameObject element in GetUiElementsUnderMouse())
+        {
+            Item item = element.GetComponent<Item>();
+            if (item != null && item != this)
+            {
+                parentList.SwapItems(this, item);
+            }
+        }
+    }
+
+    List<GameObject> GetUiElementsUnderMouse()
     {
         PointerEventData pointerData = new PointerEventData(EventSystem.current);
         pointerData.pointerId = -1;
@@ -19,38 +45,31 @@ public class Item : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
 
-        foreach (RaycastResult result in results)
-        {
-            MyList myList = result.gameObject.GetComponent<MyList>();
-            if (myList != null)
-            {
-                return myList;
-            }
-        }
-
-        return null;
+        return results.Select(x => x.gameObject).ToList();
     }
 
     // Unity
     private void Start()
     {
-        myList = GetComponentInParent<MyList>();
+        parentList = GetComponentInParent<MyList>();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        myList.RemoveItem(this);
+
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
+        CheckForListSwap();
+        CheckForItemSpaw();
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        MyList listUnderMouse = GetListUnderMouse();
-        myList = listUnderMouse != null ? listUnderMouse : myList;
-        myList.AddItem(this);
+        MyList listUnderMouse = CheckForListSwap();
+        parentList = listUnderMouse != null ? listUnderMouse : parentList;
+        parentList.AddItem(this);
     }
 }

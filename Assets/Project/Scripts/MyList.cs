@@ -1,28 +1,35 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MyList : MonoBehaviour
 {
 	[SerializeField] Transform content;
 
-	Canvas canvas;
-
 	public void AddItem(Item item)
-	{
-		item.transform.SetParent(content);
-    }
-
-	public void RemoveItem(Item item)
 	{
 		if (item.transform.parent == content)
 		{
-			item.transform.SetParent(canvas.transform);
+			UpdateItem(item);
+		}
+		else
+		{
+            item.transform.SetParent(content);
         }
-	}
+    }
 
-	// Unity
-	private void Start()
+	public void SwapItems(Item item1, Item item2)
 	{
-		canvas = GetComponentInParent<Canvas>();
-	}
+		int item1Index = item1.transform.GetSiblingIndex();
+		int item2Index = item2.transform.GetSiblingIndex();
+
+		item1.transform.SetSiblingIndex(item2Index);
+		item2.transform.SetSiblingIndex(item1Index);
+    }
+
+	void UpdateItem(Item item)
+	{
+		int index = item.transform.GetSiblingIndex();
+		item.transform.SetParent(null);
+		item.transform.SetParent(content);
+		item.transform.SetSiblingIndex(index);
+    }
 }
