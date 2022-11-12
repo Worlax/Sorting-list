@@ -2,7 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BetterToggle : MonoBehaviour
+// Simple toggle, but with 3 states insted of 2
+public class TripleToggle : MonoBehaviour
 {
 	public enum ToggleState
 	{
@@ -15,7 +16,7 @@ public class BetterToggle : MonoBehaviour
 	[SerializeField] Transform offImage;
 	[SerializeField] Transform upImage;
 	[SerializeField] Transform downImage;
-	[SerializeField] BetterToggleGrpoup betterToggleGroup;
+	[SerializeField] TripleToggleGroup toggleGroup;
 
     public ToggleState State { get; private set; }
 
@@ -58,9 +59,9 @@ public class BetterToggle : MonoBehaviour
 	// Unity
 	private void Awake()
 	{
-		if (betterToggleGroup != null)
+		if (toggleGroup != null)
 		{
-            betterToggleGroup.AddToggle(this);
+            toggleGroup.AddToggle(this);
         }
 	}
 
@@ -75,7 +76,7 @@ public class BetterToggle : MonoBehaviour
 		switch (State)
 		{
 			case ToggleState.Off:
-				SetState(ToggleState.Up);
+				SetState(ToggleState.Down);
                 break;
 
 			case ToggleState.Up:

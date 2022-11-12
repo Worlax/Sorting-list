@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
+// Item that u can drag around and swap it with other items
+// or drag it into in list
 public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [SerializeField] new TMP_Text name;
@@ -16,7 +18,7 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
 
     public static event Action<Item> OnParentChanged;
 
-    MyList parentList;
+    ItemsList parentList;
 
     public void Init(ItemData itemData)
     {
@@ -33,31 +35,29 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
         };
     }
 
-    MyList CheckForListSwap()
+    void SwapListIfOver()
     {
         foreach (GameObject element in GetUiElementsUnderMouse())
         {
-            MyList myList = element.GetComponent<MyList>();
+            ItemsList listOverMouse = element.GetComponent<ItemsList>();
 
-            if (myList != null && myList != parentList)
+            if (listOverMouse != null && listOverMouse != parentList)
             {
-                parentList = myList;
+                parentList = listOverMouse;
                 parentList.AddItem(this);
                 OnParentChanged?.Invoke(this);
             }
         }
-
-        return null;
     }
 
-    void CheckForItemSpaw()
+    void SpawItemsIfOver()
     {
         foreach (GameObject element in GetUiElementsUnderMouse())
         {
-            Item item = element.GetComponent<Item>();
-            if (item != null && item != this)
+            Item itemOverMouse = element.GetComponent<Item>();
+            if (itemOverMouse != null && itemOverMouse != this)
             {
-                parentList.SwapItems(this, item);
+                parentList.SwapItems(this, itemOverMouse);
             }
         }
     }
@@ -77,7 +77,7 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
     // Unity
     private void Start()
     {
-        parentList = GetComponentInParent<MyList>();
+        parentList = GetComponentInParent<ItemsList>();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -88,14 +88,12 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
-        CheckForListSwap();
-        CheckForItemSpaw();
+        SwapListIfOver();
+        SpawItemsIfOver();
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        MyList listUnderMouse = CheckForListSwap();
-        parentList = listUnderMouse != null ? listUnderMouse : parentList;
-        parentList.AddItem(this);
+        parentList.UpdateItemPosition(this);
     }
 }
