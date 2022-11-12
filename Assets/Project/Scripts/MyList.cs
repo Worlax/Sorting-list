@@ -2,16 +2,37 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 
 public class MyList : MonoBehaviour
 {
+	[SerializeField] new TMP_Text name;
 	[SerializeField] TMP_Text numberOfItems;
+	[SerializeField] Item itemPrefab;
 	[SerializeField] Transform content;
 
-	public List<Item> GetAllItems()
+	public string Name => name.text;
+
+    public List<Item> GetAllItems()
 	{
 		return content.GetComponentsInChildren<Item>().ToList();
 	}
+
+	public List<ItemData> GetAllItemsData()
+	{
+		return GetAllItems().Select(x => x.GetData()).ToList();
+	}
+
+	public void Init(List<ItemData> itemsData)
+	{
+		DeleteAllItems();
+
+		foreach(ItemData itemData in itemsData)
+		{
+			Item item = Instantiate(itemPrefab, content);
+			item.Init(itemData);
+        }
+    }
 
 	public void AddItem(Item item)
 	{
@@ -33,6 +54,14 @@ public class MyList : MonoBehaviour
 		item1.transform.SetSiblingIndex(item2Index);
 		item2.transform.SetSiblingIndex(item1Index);
     }
+
+	void DeleteAllItems()
+	{
+		foreach (Item item in content.GetComponentsInChildren<Item>())
+		{
+			Destroy(item.gameObject);
+		}
+	}
 
 	void UpdateItem(Item item)
 	{

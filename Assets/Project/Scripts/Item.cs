@@ -18,6 +18,21 @@ public class Item : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUp
 
     MyList parentList;
 
+    public void Init(ItemData itemData)
+    {
+        name.text = itemData.Name;
+        id.text = itemData.Id;
+    }
+
+    public ItemData GetData()
+    {
+        return new ItemData()
+        {
+            Name = Name,
+            Id = Id
+        };
+    }
+
     MyList CheckForListSwap()
     {
         foreach (GameObject element in GetUiElementsUnderMouse())
