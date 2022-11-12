@@ -32,12 +32,13 @@ public class Serialization : MonoBehaviour
 
         foreach (string fileName in Directory.GetFiles(SAVE_DIRECTORY))
 		{
-			string listName = Path.GetFileNameWithoutExtension(fileName);
-			string json = File.ReadAllText(fileName);
+            string listName = Path.GetFileNameWithoutExtension(fileName);
             MyList myList = myLists.First(x => x.Name == listName);
-			List<ItemData> itemsData = JsonConvert.DeserializeObject<List<ItemData>>(json);
 
-			if (myList == null) { return; }
+            if (myList == null) { return; }
+
+			string json = File.ReadAllText(fileName);
+			List<ItemData> itemsData = JsonConvert.DeserializeObject<List<ItemData>>(json);
 
 			myList.Init(itemsData);
         }

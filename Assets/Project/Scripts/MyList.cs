@@ -32,9 +32,11 @@ public class MyList : MonoBehaviour
 			Item item = Instantiate(itemPrefab, content);
 			item.Init(itemData);
         }
+
+		numberOfItems.text = itemsData.Count.ToString();
     }
 
-	public void AddItem(Item item)
+    public void AddItem(Item item)
 	{
 		if (item.transform.parent == content)
 		{
@@ -71,7 +73,7 @@ public class MyList : MonoBehaviour
 		item.transform.SetSiblingIndex(index);
     }
 
-    void UpdateDisplayedItems()
+    void UpdateItemsCount()
     {
 		numberOfItems.text = content.transform.childCount.ToString();
     }
@@ -79,8 +81,8 @@ public class MyList : MonoBehaviour
 	// Unity
 	private void Start()
 	{
-		Item.OnParentChanged += _ => UpdateDisplayedItems();
+		Item.OnParentChanged += _ => UpdateItemsCount();
 
-        UpdateDisplayedItems();
+        UpdateItemsCount();
     }
 }
